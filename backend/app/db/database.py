@@ -22,6 +22,10 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 Base = declarative_base()
 
+# Import all models so SQLAlchemy registers them with Base.metadata
+import app.db.models  # noqa: F401, E402
+import app.db.audit_trail  # noqa: F401, E402
+
 
 def get_db():
     """FastAPI dependency that provides a database session."""

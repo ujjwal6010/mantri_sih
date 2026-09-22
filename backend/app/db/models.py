@@ -63,6 +63,18 @@ class Project(Base):
         "RiskAssessment", back_populates="project", uselist=False,
         cascade="all, delete-orphan",
     )
+    evidence_records = relationship(
+        "EvidenceRecord", back_populates="project",
+        cascade="all, delete-orphan", order_by="EvidenceRecord.submitted_at.desc()",
+    )
+    alert_action = relationship(
+        "AlertAction", back_populates="project", uselist=False,
+        cascade="all, delete-orphan",
+    )
+    audit_events = relationship(
+        "AuditEvent", back_populates="project",
+        cascade="all, delete-orphan", order_by="AuditEvent.timestamp.desc()",
+    )
 
     def __repr__(self) -> str:
         return f"<Project {self.project_id} | {self.work_type} | {self.district}>"
