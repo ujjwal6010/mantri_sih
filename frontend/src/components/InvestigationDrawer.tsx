@@ -18,6 +18,8 @@ import {
 } from 'lucide-react';
 import type { ProjectFingerprint, RiskResponse, ProjectSummary } from '../types/project';
 import { fetchProjectFingerprint, fetchProjectRisk } from '../services/api';
+import { AlertLifecycle } from './AlertLifecycle';
+import { EvidencePanel } from './EvidencePanel';
 
 interface InvestigationDrawerProps {
   projectId: string | null;
@@ -415,8 +417,12 @@ export const InvestigationDrawer: React.FC<InvestigationDrawerProps> = ({
                 </div>
               </div>
 
+              {/* V2: Alert Lifecycle & Evidence */}
+              <AlertLifecycle projectId={projectId} />
+              <EvidencePanel projectId={projectId} compact />
+
               {/* Statutory Disclaimer */}
-              <div className="statutory-disclaimer-box">
+              <div className="drawer-disclaimer">
                 <Info size={16} className="disclaimer-icon" />
                 <p className="disclaimer-text">
                   <strong>STATUTORY NOTICE:</strong> This intelligence report identifies statistical risk signals

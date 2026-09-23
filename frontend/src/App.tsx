@@ -19,6 +19,7 @@ import { InvestigationDrawer } from './components/InvestigationDrawer';
 import { DossierModal } from './components/DossierModal';
 import { AboutModal } from './components/AboutModal';
 import { SettingsModal } from './components/SettingsModal';
+import { AuditTrailView } from './components/AuditTrailView';
 
 const App = () => {
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
@@ -27,7 +28,7 @@ const App = () => {
     const [isBackendLive, setIsBackendLive] = useState(false);
   const [overview, setOverview] = useState<OverviewStats | null>(null);
   const [projects, setProjects] = useState<ProjectSummary[]>([]);
-  const [activeTab, setActiveTab] = useState<'projects' | 'analytics' | 'map'>('projects');
+  const [activeTab, setActiveTab] = useState<'projects' | 'analytics' | 'map' | 'audit'>('projects');
   const [showAboutModal, setShowAboutModal] = useState(false);
   const [showSettingsModal, setShowSettingsModal] = useState(false);
   const [selectedDrawerId, setSelectedDrawerId] = useState<string | null>(null);
@@ -192,6 +193,11 @@ const App = () => {
           <TelemetryBar
             overview={overview}
             isLoading={isLoading}
+            onKpiClick={(type) => {
+              if (type === 'projects') setActiveTab('projects');
+              else if (type === 'alerts') setActiveTab('audit');
+              else if (type === 'analytics') setActiveTab('analytics');
+            }}
           />
 
           {activeTab === 'projects' ? (
@@ -223,6 +229,8 @@ const App = () => {
               onSelectState={handleSelectStateFromAnalytics}
               onSelectSector={handleSelectSectorFromAnalytics}
             />
+          ) : activeTab === 'audit' ? (
+            <AuditTrailView />
           ) : (
             <GISMapView
               projects={projects}

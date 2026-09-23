@@ -6,9 +6,10 @@ import {
   FileText,
   Settings,
   Landmark,
+  Shield,
 } from 'lucide-react';
 
-type TabId = 'projects' | 'analytics' | 'map';
+type TabId = 'projects' | 'analytics' | 'map' | 'audit';
 
 interface SidebarProps {
   activeTab: TabId;
@@ -35,6 +36,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
     { id: 'projects', label: 'Projects', icon: <Folder size={18} />, tab: 'projects' },
     { id: 'analytics', label: 'Analytics', icon: <Landmark size={18} />, tab: 'analytics' },
     { id: 'map', label: 'GIS Risk Map', icon: <Map size={18} />, tab: 'map' },
+    { id: 'audit', label: 'Audit Trail', icon: <Shield size={18} />, tab: 'audit' },
   ];
 
   const bottomNavItems: NavItem[] = [

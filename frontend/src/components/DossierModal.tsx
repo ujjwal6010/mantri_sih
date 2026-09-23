@@ -11,6 +11,8 @@ import {
 import type { DossierResponse, ProjectSummary } from '../types/project';
 import { fetchProjectDossier } from '../services/api';
 import { PeerComparisonChart } from './PeerChart';
+import { AlertLifecycle } from './AlertLifecycle';
+import { EvidencePanel } from './EvidencePanel';
 
 interface DossierModalProps {
   projectId: string | null;
@@ -302,6 +304,11 @@ export const DossierModal: React.FC<DossierModalProps> = ({
               </div>
 
               {/* Document Signature Sign-Off Block (for physical printouts) */}
+              {/* V2: Alert Lifecycle & Evidence */}
+              <AlertLifecycle projectId={projectId} />
+              <EvidencePanel projectId={projectId} />
+
+              {/* Sign-off Block */}
               <div className="doc-signoff-block">
                 <div className="signoff-col">
                   <div className="signoff-line" />

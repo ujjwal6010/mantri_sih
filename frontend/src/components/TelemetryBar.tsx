@@ -1,14 +1,16 @@
-﻿import type { OverviewStats } from '../types/project';
-import { RefreshCw, FileText, AlertTriangle, Clock, Users, BarChart } from 'lucide-react';
+import type { OverviewStats } from '../types/project';
+import { RefreshCw, FileText, AlertTriangle, Clock, Users, BarChart, Shield, ArrowUpCircle } from 'lucide-react';
 
 interface TelemetryBarProps {
   overview: OverviewStats | null;
   isLoading: boolean;
+  onKpiClick?: (type: 'projects' | 'alerts' | 'analytics') => void;
 }
 
 export const TelemetryBar: React.FC<TelemetryBarProps> = ({
   overview,
   isLoading,
+  onKpiClick,
 }) => {
   if (isLoading || !overview) {
     return (
@@ -48,7 +50,7 @@ export const TelemetryBar: React.FC<TelemetryBarProps> = ({
 
       {/* KPI Cards */}
       <div className="kpi-cards-grid">
-        <div className="kpi-card">
+        <div className="kpi-card" onClick={() => onKpiClick?.('projects')}>
           <div className="kpi-card-left">
             <div className="kpi-icon-wrap blue"><FileText size={20} /></div>
           </div>
@@ -62,7 +64,7 @@ export const TelemetryBar: React.FC<TelemetryBarProps> = ({
           </div>
         </div>
 
-        <div className="kpi-card">
+        <div className="kpi-card" onClick={() => onKpiClick?.('projects')}>
           <div className="kpi-card-left">
             <div className="kpi-icon-wrap red"><AlertTriangle size={20} /></div>
           </div>
@@ -76,7 +78,7 @@ export const TelemetryBar: React.FC<TelemetryBarProps> = ({
           </div>
         </div>
 
-        <div className="kpi-card">
+        <div className="kpi-card" onClick={() => onKpiClick?.('projects')}>
           <div className="kpi-card-left">
             <div className="kpi-icon-wrap orange"><Clock size={20} /></div>
           </div>
@@ -90,7 +92,7 @@ export const TelemetryBar: React.FC<TelemetryBarProps> = ({
           </div>
         </div>
 
-        <div className="kpi-card">
+        <div className="kpi-card" onClick={() => onKpiClick?.('projects')}>
           <div className="kpi-card-left">
             <div className="kpi-icon-wrap purple"><Users size={20} /></div>
           </div>
@@ -104,7 +106,7 @@ export const TelemetryBar: React.FC<TelemetryBarProps> = ({
           </div>
         </div>
 
-        <div className="kpi-card">
+        <div className="kpi-card" onClick={() => onKpiClick?.('analytics')}>
           <div className="kpi-card-left">
             <div className="kpi-icon-wrap green"><BarChart size={20} /></div>
           </div>
@@ -114,6 +116,32 @@ export const TelemetryBar: React.FC<TelemetryBarProps> = ({
             </div>
             <span className="kpi-label">States Covered</span>
             <span className="kpi-sub-text">10 Work Types</span>
+          </div>
+        </div>
+
+        <div className="kpi-card" onClick={() => onKpiClick?.('alerts')}>
+          <div className="kpi-card-left">
+            <div className="kpi-icon-wrap red"><Shield size={20} /></div>
+          </div>
+          <div className="kpi-card-right">
+            <div className="kpi-val-row">
+              <span className="kpi-value">{overview.open_alerts ?? 0}</span>
+            </div>
+            <span className="kpi-label">Open Alerts</span>
+            <span className="kpi-sub-text">Awaiting review</span>
+          </div>
+        </div>
+
+        <div className="kpi-card" onClick={() => onKpiClick?.('alerts')}>
+          <div className="kpi-card-left">
+            <div className="kpi-icon-wrap orange"><ArrowUpCircle size={20} /></div>
+          </div>
+          <div className="kpi-card-right">
+            <div className="kpi-val-row">
+              <span className="kpi-value">{overview.escalated_count ?? 0}</span>
+            </div>
+            <span className="kpi-label">Escalated</span>
+            <span className="kpi-sub-text">Requires senior review</span>
           </div>
         </div>
       </div>
