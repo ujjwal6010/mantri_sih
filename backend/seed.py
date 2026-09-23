@@ -45,6 +45,15 @@ def main():
             print("      Intelligence engines not yet implemented — skipping.")
             print("      (This is expected in Phase 1)")
 
+        # 4. Auto-open alerts for high-risk projects (V2)
+        print("\n[4/4] Opening alerts for high-risk projects...")
+        try:
+            from app.services.audit_service import auto_open_alerts
+            opened = auto_open_alerts(db)
+            print(f"      Alerts opened: {opened}")
+        except ImportError:
+            print("      Audit service not yet implemented — skipping.")
+
         # Summary
         print("\n" + "=" * 60)
         print("  SEED COMPLETE")
@@ -64,6 +73,11 @@ def main():
         assessments = db.query(RiskAssessment).count()
         if assessments:
             print(f"  Risk assessed:   {assessments}")
+
+        from app.db.audit_trail import AlertAction
+        alert_count = db.query(AlertAction).count()
+        if alert_count:
+            print(f"  Active alerts:   {alert_count}")
 
         print()
     finally:

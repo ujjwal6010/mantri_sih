@@ -75,3 +75,38 @@ class AlertStats(BaseModel):
     escalated: int = 0
     resolved: int = 0
     dismissed: int = 0
+
+
+class EvidenceRequirementItem(BaseModel):
+    type: str
+    reasons: list[str]
+    weight: float
+    source_anomalies: list[str]
+    submitted: bool = False
+
+
+class SufficiencyResponse(BaseModel):
+    score: float
+    total_required: int
+    submitted_count: int
+    missing_types: list[str]
+    requirements: list[EvidenceRequirementItem]
+
+
+class InspectorStatsResponse(BaseModel):
+    inspector: str
+    total_handled: int
+    resolved: int
+    dismissed: int
+    escalated: int
+    active_reviews: int
+    resolve_rate: float
+    escalation_rate: float
+    avg_response_hours: float | None = None
+    is_flagged: bool = False
+    flag_reason: str | None = None
+
+
+class ReinspectionResponse(BaseModel):
+    reopened: int
+    message: str

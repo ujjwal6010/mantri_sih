@@ -10,11 +10,16 @@ from app.schemas.audit import (
     SubmitEvidenceRequest, EvidenceResponse,
     UpdateAlertRequest, AlertActionResponse,
     AuditEventResponse, AuditTrailResponse, AlertStats,
+    EvidenceRequirementItem, SufficiencyResponse,
+    InspectorStatsResponse, ReinspectionResponse,
 )
 from app.services.audit_service import (
     submit_evidence, transition_alert, verify_audit_chain,
     get_alert_stats, record_event,
+    compute_evidence_requirements, compute_sufficiency_score,
+    trigger_reinspection,
 )
+from app.services.inspector_analytics import get_inspector_stats
 
 router = APIRouter()
 
@@ -151,3 +156,43 @@ def verify_chain(project_id: str, db: Session = Depends(get_db)):
 def alert_overview(db: Session = Depends(get_db)):
     """Alert statistics across all projects."""
     return AlertStats(**get_alert_stats(db))
+
+
+# Evidence Requirements & Sufficiency
+
+@router.get("/projects/{project_id}/evidence-requirements", response_model=list[EvidenceRequirementItem])
+def evidence_requirements(project_id: str, db: Session = Depends(get_db)):
+    """What evidence is needed for this project, based on its anomalies."""
+    project = _get_project_or_404(project_id, db)
+    return compute_evidence_requirements(db, project)
+
+
+@router.get("/projects/{project_id}/evidence-sufficiency", response_model=SufficiencyResponse)
+def evidence_sufficiency(project_id: str, db: Session = Depends(get_db)):
+    """How much of the required evidence has been submitted."""
+    project = _get_project_or_404(project_id, db)
+    result = compute_sufficiency_score(db, project)
+    return SufficiencyResponse(**result)
+
+
+# Inspector Behaviour Analytics
+
+@router.get("/inspectors/analytics", response_model=list[InspectorStatsResponse])
+def inspector_analytics(db: Session = Depends(get_db)):
+    """Behaviour profile for every inspector who has handled alerts."""
+    return get_inspector_stats(db)
+
+
+# Re-inspection
+
+@router.post("/reinspection/trigger", response_model=ReinspectionResponse)
+def reinspection_trigger(
+    sample_rate: float = Query(0.2, ge=0.0, le=1.0),
+    db: Session = Depends(get_db),
+):
+    """Randomly re-open a fraction of resolved alerts for secondary review."""
+    reopened = trigger_reinspection(db, sample_rate)
+    return ReinspectionResponse(
+        reopened=reopened,
+        message=f"{reopened} alert(s) reopened for re-inspection.",
+    )

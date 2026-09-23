@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React from 'react';
 import type { ProjectSummary } from '../types/project';
 import { MapPin, MoreVertical, ArrowRight } from 'lucide-react';
 
@@ -50,7 +50,7 @@ export const ProjectTable: React.FC<ProjectTableProps> = ({
   };
 
   return (
-    <div className="table-wrapper">
+    <div className="table-container">
       <table className="project-data-table">
         <thead>
           <tr>

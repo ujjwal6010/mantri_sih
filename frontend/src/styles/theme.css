@@ -1,4 +1,4 @@
-﻿/* Mantri Drishti - Design Tokens (Light/Dark Mode Support) */
+/* Mantri Drishti - Design Tokens (Light/Dark Mode Support) */
 
 :root {
   /* Default to light theme if no attribute is set */
@@ -108,14 +108,14 @@ html[data-theme="light"] {
   /* Same as default root above */
 }
 
-/* Dark Theme overrides (Sleek Slate with subtle blue/yellow) */
+/* Dark Theme overrides (Rich Purple/Navy based on graphify theme) */
 html[data-theme="dark"] {
   /* Background Surfaces */
-  --bg-primary: #0B1120;
-  --bg-secondary: #0F172A;
-  --surface: #1E293B;
-  --surface-secondary: #0F172A;
-  --surface-hover: #334155;
+  --bg-primary: #0D0D16;
+  --bg-secondary: #0D0D16;
+  --surface: #161625;
+  --surface-secondary: #131320;
+  --surface-hover: #1D1D2F;
 
   /* Text Colors */
   --text-primary: #F8FAFC;
@@ -125,9 +125,9 @@ html[data-theme="dark"] {
   --text-inverse: #020617;
 
   /* Borders */
-  --border: #334155;
-  --border-strong: #475569;
-  --border-subtle: #1E293B;
+  --border: #232336;
+  --border-strong: #2E2E48;
+  --border-subtle: #191929;
   --border-accent: rgba(234, 179, 8, 0.15);
 
   /* Primary Brand - Keep Yellow Accent but adjust for dark contrast */
