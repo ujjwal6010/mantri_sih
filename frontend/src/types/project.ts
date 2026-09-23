@@ -148,6 +148,81 @@ export interface OverviewStats {
     work_type: string;
     count: number;
   }>;
+  open_alerts?: number;
+  escalated_count?: number;
 }
 
 export type RiskBand = 'all' | 'critical' | 'high' | 'medium' | 'low';
+
+// V2: Evidence, Alerts, and Audit Trail
+
+export interface EvidenceRecord {
+  id: number;
+  project_id: number;
+  submitted_by: string;
+  evidence_type: 'site_photo' | 'document' | 'geolocation' | 'inspector_note';
+  description: string;
+  file_path?: string | null;
+  latitude?: number | null;
+  longitude?: number | null;
+  submitted_at: string;
+}
+
+export type AlertStatus =
+  | 'open'
+  | 'under_review'
+  | 'evidence_submitted'
+  | 'escalated'
+  | 'resolved'
+  | 'dismissed';
+
+export interface AlertAction {
+  id: number;
+  project_id: number;
+  current_status: AlertStatus;
+  assigned_to?: string | null;
+  reviewed_by?: string | null;
+  resolution_notes?: string | null;
+  opened_at: string;
+  resolved_at?: string | null;
+}
+
+export interface AuditEvent {
+  id: number;
+  project_id: number;
+  actor: string;
+  action: string;
+  details?: string | null;
+  timestamp: string;
+  integrity_hash: string;
+}
+
+export interface AuditTrailResponse {
+  events: AuditEvent[];
+  total: number;
+  chain_intact?: boolean | null;
+}
+
+export interface AlertStats {
+  open_alerts: number;
+  under_review: number;
+  evidence_submitted: number;
+  escalated: number;
+  resolved: number;
+  dismissed: number;
+}
+
+export interface SubmitEvidencePayload {
+  submitted_by: string;
+  evidence_type: string;
+  description: string;
+  file_path?: string | null;
+  latitude?: number | null;
+  longitude?: number | null;
+}
+
+export interface UpdateAlertPayload {
+  new_status: string;
+  actor: string;
+  resolution_notes?: string | null;
+}

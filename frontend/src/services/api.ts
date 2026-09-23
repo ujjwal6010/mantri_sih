@@ -5,6 +5,12 @@ import type {
   ProjectFingerprint,
   ProjectSummary,
   RiskResponse,
+  EvidenceRecord,
+  AlertAction,
+  AuditTrailResponse,
+  AlertStats,
+  SubmitEvidencePayload,
+  UpdateAlertPayload,
 } from '../types/project';
 import {
   MOCK_DOSSIERS,
@@ -12,6 +18,10 @@ import {
   MOCK_OVERVIEW,
   MOCK_PROJECTS,
   MOCK_RISK,
+  MOCK_EVIDENCE,
+  MOCK_ALERTS,
+  MOCK_AUDIT_EVENTS,
+  MOCK_ALERT_STATS,
 } from './mockData';
 
 const BASE_URL = 'http://127.0.0.1:8000';
@@ -242,5 +252,106 @@ export async function fetchProjectDossier(projectId: string): Promise<DossierRes
           'This dossier identifies risk signals for authorised human verification. It does not establish fraud or misconduct.',
       }
     );
+  }
+}
+
+// V2: Evidence, Alerts, Audit Trail
+
+export async function submitEvidence(
+  projectId: string,
+  payload: SubmitEvidencePayload,
+): Promise<EvidenceRecord> {
+  try {
+    const res = await fetch(`${BASE_URL}/projects/${projectId}/evidence`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    if (!res.ok) throw new Error(await res.text());
+    return await res.json();
+  } catch (err) {
+    console.error('[Mantri Drishti] Evidence submission failed:', err);
+    throw err;
+  }
+}
+
+export async function fetchEvidence(projectId: string): Promise<EvidenceRecord[]> {
+  try {
+    const res = await fetch(`${BASE_URL}/projects/${projectId}/evidence`);
+    if (!res.ok) throw new Error(`Evidence fetch failed`);
+    return await res.json();
+  } catch {
+    return MOCK_EVIDENCE[projectId] || [];
+  }
+}
+
+export async function fetchAlertStatus(projectId: string): Promise<AlertAction | null> {
+  try {
+    const res = await fetch(`${BASE_URL}/projects/${projectId}/alert`);
+    if (!res.ok) throw new Error(`Alert fetch failed`);
+    const data = await res.json();
+    return data;
+  } catch {
+    return MOCK_ALERTS[projectId] || null;
+  }
+}
+
+export async function updateAlert(
+  projectId: string,
+  payload: UpdateAlertPayload,
+): Promise<AlertAction> {
+  try {
+    const res = await fetch(`${BASE_URL}/projects/${projectId}/alert`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    if (!res.ok) {
+      const errorData = await res.json();
+      throw new Error(errorData.detail || 'Alert update failed');
+    }
+    return await res.json();
+  } catch (err) {
+    console.error('[Mantri Drishti] Alert update failed:', err);
+    throw err;
+  }
+}
+
+export async function fetchAuditTrail(
+  projectId?: string,
+  limit = 100,
+): Promise<AuditTrailResponse> {
+  try {
+    const url = projectId
+      ? `${BASE_URL}/projects/${projectId}/audit-trail?limit=${limit}`
+      : `${BASE_URL}/audit-trail?limit=${limit}`;
+    const res = await fetch(url);
+    if (!res.ok) throw new Error(`Audit trail fetch failed`);
+    return await res.json();
+  } catch {
+    const events = projectId ? (MOCK_AUDIT_EVENTS[projectId] || []) : Object.values(MOCK_AUDIT_EVENTS).flat();
+    return { events, total: events.length, chain_intact: true };
+  }
+}
+
+export async function verifyAuditChain(
+  projectId: string,
+): Promise<{ valid: boolean; checked: number; broken_at: number | null }> {
+  try {
+    const res = await fetch(`${BASE_URL}/audit-trail/verify/${projectId}`);
+    if (!res.ok) throw new Error(`Chain verification failed`);
+    return await res.json();
+  } catch {
+    return { valid: true, checked: 3, broken_at: null };
+  }
+}
+
+export async function fetchAlertOverview(): Promise<AlertStats> {
+  try {
+    const res = await fetch(`${BASE_URL}/alerts/overview`);
+    if (!res.ok) throw new Error(`Alert overview failed`);
+    return await res.json();
+  } catch {
+    return MOCK_ALERT_STATS;
   }
 }

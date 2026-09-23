@@ -10,6 +10,7 @@ from sqlalchemy import func
 from app.db.database import get_db
 from app.db.models import Project, RiskAssessment
 from app.schemas.project import RiskResponse, RiskBreakdown, OverviewStats
+from app.services.audit_service import get_alert_stats
 
 router = APIRouter()
 
@@ -87,6 +88,8 @@ def get_overview(db: Session = Depends(get_db)):
     )
     work_type_breakdown = [{"work_type": wt, "count": c} for wt, c in wt_data]
 
+    alert_stats = get_alert_stats(db)
+
     return OverviewStats(
         total_projects=total,
         projects_requiring_attention=projects_requiring_attention,
@@ -96,6 +99,8 @@ def get_overview(db: Session = Depends(get_db)):
         risk_distribution=risk_distribution,
         top_states=top_states,
         work_type_breakdown=work_type_breakdown,
+        open_alerts=alert_stats["open_alerts"],
+        escalated_count=alert_stats["escalated"],
     )
 
 # GET /projects/{project_id}/risk

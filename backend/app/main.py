@@ -6,6 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
 from app.api.projects import router as projects_router
 from app.api.risk import router as risk_router
+from app.api.audit import router as audit_router
 
 app = FastAPI(
     title=settings.APP_NAME,
@@ -25,6 +26,7 @@ app.add_middleware(
 # Routers
 app.include_router(projects_router, prefix="/projects", tags=["Projects"])
 app.include_router(risk_router, tags=["Risk & Overview"])
+app.include_router(audit_router, tags=["Audit & Evidence"])
 
 @app.get("/", tags=["Health"])
 def root():

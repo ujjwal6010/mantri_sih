@@ -156,3 +156,6 @@ class OverviewStats(BaseModel):
     risk_distribution: dict[str, int]  # {"low": n, "medium": n, "high": n, "critical": n}
     top_states: list[dict]             # [{state, count, avg_risk}]
     work_type_breakdown: list[dict]    # [{work_type, count}]
+
+    open_alerts: int = 0
+    escalated_count: int = 0

@@ -1,4 +1,4 @@
-import type { DossierResponse, OverviewStats, ProjectFingerprint, ProjectSummary, RiskResponse } from '../types/project';
+import type { AlertAction, AlertStats, AuditEvent, DossierResponse, EvidenceRecord, OverviewStats, ProjectFingerprint, ProjectSummary, RiskResponse } from '../types/project';
 
 export const MOCK_OVERVIEW: OverviewStats = {
   total_projects: 80,
@@ -32,6 +32,8 @@ export const MOCK_OVERVIEW: OverviewStats = {
     { work_type: 'Health Sub-Center', count: 2 },
     { work_type: 'Anganwadi Center', count: 1 },
   ],
+  open_alerts: 18,
+  escalated_count: 4,
 };
 
 export const MOCK_PROJECTS: ProjectSummary[] = [
@@ -473,4 +475,94 @@ export const MOCK_DOSSIERS: Record<string, DossierResponse> = {
     disclaimer:
       'This dossier identifies risk signals for authorised human verification. It does not establish fraud or misconduct.',
   },
+};
+
+// V2 Mock Data
+
+export const MOCK_EVIDENCE: Record<string, EvidenceRecord[]> = {
+  MD101: [
+    {
+      id: 1,
+      project_id: 101,
+      submitted_by: 'Inspector Sharma',
+      evidence_type: 'inspector_note',
+      description: 'Site visit on 15 Sep 2026: Road base layer incomplete despite 86.9% expenditure reported. Only partial grading observed over 1.2km stretch.',
+      submitted_at: '2026-09-15T10:30:00',
+    },
+    {
+      id: 2,
+      project_id: 101,
+      submitted_by: 'Inspector Sharma',
+      evidence_type: 'site_photo',
+      description: 'Photographic evidence of incomplete road surface near Jaipur-Ajmer NH junction. Gravel exposed, no bitumen layer applied.',
+      file_path: '/evidence/md101_site_photo_01.jpg',
+      latitude: 26.8546,
+      longitude: 75.7217,
+      submitted_at: '2026-09-15T10:45:00',
+    },
+  ],
+};
+
+export const MOCK_ALERTS: Record<string, AlertAction> = {
+  MD101: {
+    id: 1,
+    project_id: 101,
+    current_status: 'evidence_submitted',
+    assigned_to: 'Inspector Sharma',
+    opened_at: '2026-09-10T08:00:00',
+  },
+  MD102: {
+    id: 2,
+    project_id: 102,
+    current_status: 'open',
+    opened_at: '2026-09-10T08:00:00',
+  },
+  MD103: {
+    id: 3,
+    project_id: 103,
+    current_status: 'escalated',
+    assigned_to: 'Inspector Verma',
+    opened_at: '2026-09-10T08:00:00',
+  },
+};
+
+export const MOCK_AUDIT_EVENTS: Record<string, AuditEvent[]> = {
+  MD101: [
+    {
+      id: 1,
+      project_id: 101,
+      actor: 'system',
+      action: 'alert_opened',
+      details: JSON.stringify({ risk_score: 82.5, reason: 'Auto-opened: risk score exceeds threshold.' }),
+      timestamp: '2026-09-10T08:00:00',
+      integrity_hash: 'a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2',
+    },
+    {
+      id: 2,
+      project_id: 101,
+      actor: 'Inspector Sharma',
+      action: 'alert_status_changed',
+      details: JSON.stringify({ from_status: 'open', to_status: 'under_review' }),
+      timestamp: '2026-09-12T09:15:00',
+      integrity_hash: 'b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3',
+    },
+    {
+      id: 3,
+      project_id: 101,
+      actor: 'Inspector Sharma',
+      action: 'evidence_submitted',
+      details: JSON.stringify({ evidence_type: 'inspector_note', description: 'Site visit completed.' }),
+      timestamp: '2026-09-15T10:30:00',
+      integrity_hash: 'c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4',
+    },
+  ],
+};
+
+export const MOCK_ALERT_STATS: AlertStats = {
+  open_alerts: 18,
+  under_review: 6,
+  evidence_submitted: 4,
+  escalated: 4,
+  resolved: 2,
+  dismissed: 1,
 };
