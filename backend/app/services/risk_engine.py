@@ -8,6 +8,7 @@ from sqlalchemy.orm import Session
 
 from app.core.config import settings
 from app.db.models import Project, RiskAssessment
+from app.db.v3_models import RiskSnapshot
 from app.services.anomaly_detection import run_isolation_forest, run_rule_engine
 from app.services.similarity import run_similarity_analysis
 from app.services.dossier import run_peer_benchmarking
@@ -232,6 +233,36 @@ def run_full_analysis(db: Session) -> int:
             assessed_at=datetime.utcnow(),
         )
         db.add(ra)
+        
+        # Temporal risk tracking (V3)
+        # Find previous snapshot to calculate delta
+        prev_snapshot = db.query(RiskSnapshot).filter(
+            RiskSnapshot.project_id == p.id
+        ).order_by(RiskSnapshot.snapshot_at.desc()).first()
+        
+        delta = 0.0
+        is_change_point = 0
+        if prev_snapshot:
+            delta = risk - prev_snapshot.risk_score
+            # A jump of > 15 points is flagged as a change point
+            if abs(delta) > 15.0:
+                is_change_point = 1
+                
+        snapshot = RiskSnapshot(
+            project_id=p.id,
+            project_code=p.project_id,
+            risk_score=risk,
+            rule_score=round(rule["score"], 2),
+            ml_anomaly_score=round(ml["score"], 2),
+            similarity_score=round(sim["score"], 2),
+            peer_score=round(peer["score"], 2),
+            confidence_score=confidence,
+            delta_from_previous=round(delta, 2) if prev_snapshot else None,
+            is_change_point=is_change_point,
+            snapshot_at=datetime.utcnow(),
+        )
+        db.add(snapshot)
+        
         count += 1
 
     db.commit()

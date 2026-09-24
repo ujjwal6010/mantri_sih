@@ -25,6 +25,7 @@ Base = declarative_base()
 # Import all models so SQLAlchemy registers them with Base.metadata
 import app.db.models  # noqa: F401, E402
 import app.db.audit_trail  # noqa: F401, E402
+import app.db.v3_models  # noqa: F401, E402
 
 
 def get_db():

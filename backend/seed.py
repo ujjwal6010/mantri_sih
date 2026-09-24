@@ -46,13 +46,22 @@ def main():
             print("      (This is expected in Phase 1)")
 
         # 4. Auto-open alerts for high-risk projects (V2)
-        print("\n[4/4] Opening alerts for high-risk projects...")
+        print("\n[4/5] Opening alerts for high-risk projects...")
         try:
             from app.services.audit_service import auto_open_alerts
             opened = auto_open_alerts(db)
             print(f"      Alerts opened: {opened}")
         except ImportError:
             print("      Audit service not yet implemented — skipping.")
+
+        # 5. Build entity graph (V3)
+        print("\n[5/5] Building entity graph...")
+        try:
+            from app.services.entity_graph import build_entity_graph
+            graph_stats = build_entity_graph(db)
+            print(f"      Graph built: {graph_stats['nodes']} nodes, {graph_stats['edges']} edges")
+        except ImportError:
+            print("      Entity graph service not yet implemented — skipping.")
 
         # Summary
         print("\n" + "=" * 60)
