@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, useMemo } from 'react';
 import './styles/theme.css';
 import './styles/dashboard.css';
 import './styles/v2-advanced.css';
+import './styles/v3-intelligence.css';
 import type { ProjectSummary, OverviewStats, RiskBand } from './types/project';
 import {
   checkBackendHealth,
@@ -186,8 +187,6 @@ const App = () => {
         <TopHeader
           theme={theme}
           toggleTheme={toggleTheme}
-          selectedState={selectedState}
-          onStateChange={setSelectedState}
         />
 
         <main className="main-content">

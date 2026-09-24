@@ -20,6 +20,8 @@ import type { ProjectFingerprint, RiskResponse, ProjectSummary } from '../types/
 import { fetchProjectFingerprint, fetchProjectRisk } from '../services/api';
 import { AlertLifecycle } from './AlertLifecycle';
 import { EvidencePanel } from './EvidencePanel';
+import { RiskTrajectory } from './RiskTrajectory';
+import { ResidualBadge } from './ResidualBadge';
 
 interface InvestigationDrawerProps {
   projectId: string | null;
@@ -153,6 +155,14 @@ export const InvestigationDrawer: React.FC<InvestigationDrawerProps> = ({
                     {confScore >= 90 ? 'High Signal Agreement' : 'Sufficient Data Evidence'}
                   </span>
                 </div>
+              </div>
+
+              {/* V3: Contextual vs Residual Risk */}
+              <ResidualBadge projectId={projectId} />
+
+              {/* V3: Temporal Trajectory */}
+              <div className="drawer-section">
+                <RiskTrajectory projectId={projectId} />
               </div>
 
               {/* 2. Four-Engine Intelligence Fusion Breakdown */}

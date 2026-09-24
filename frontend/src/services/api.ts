@@ -15,6 +15,12 @@ import type {
   SufficiencyScore,
   InspectorStats,
   ReinspectionResult,
+  RiskSnapshot,
+  RiskVelocity,
+  ResidualAnomaly,
+  EntityGraph,
+  EntityCluster,
+  GamingSuspect,
 } from '../types/project';
 import {
   MOCK_DOSSIERS,
@@ -416,3 +422,79 @@ export async function triggerReinspection(
     return { reopened: 0, message: 'Re-inspection service unavailable.' };
   }
 }
+
+// ==========================================
+// V3 Intelligence API (Understand & Adapt)
+// ==========================================
+
+export const fetchRiskTrajectory = async (projectId: string): Promise<{ project_code: string; trajectory: RiskSnapshot[] }> => {
+  try {
+    const response = await fetch(`${BASE_URL}/v3/projects/${projectId}/risk-trajectory`);
+    if (!response.ok) throw new Error('Failed to fetch risk trajectory');
+    return await response.json();
+  } catch {
+    return { project_code: projectId, trajectory: [] };
+  }
+};
+
+export const fetchRiskVelocity = async (projectId: string): Promise<{ project_code: string; velocity_data: RiskVelocity }> => {
+  try {
+    const response = await fetch(`${BASE_URL}/v3/projects/${projectId}/risk-velocity`);
+    if (!response.ok) throw new Error('Failed to fetch risk velocity');
+    return await response.json();
+  } catch {
+    return {
+      project_code: projectId,
+      velocity_data: { velocity: 0, total_change: 0, trend: 'stable', recent_changes: [] }
+    };
+  }
+};
+
+export const fetchResidualAnomaly = async (projectId: string): Promise<ResidualAnomaly> => {
+  try {
+    const response = await fetch(`${BASE_URL}/v3/projects/${projectId}/residual-anomaly`);
+    if (!response.ok) throw new Error('Failed to fetch residual anomaly');
+    return await response.json();
+  } catch {
+    return {
+      project_code: projectId,
+      raw_risk_score: 0,
+      explained_deduction: 0,
+      contextual_reasons: [],
+      residual_risk_score: 0,
+      unexplained_percentage: 0,
+      status: 'normal'
+    };
+  }
+};
+
+export const fetchEntityGraph = async (): Promise<EntityGraph> => {
+  try {
+    const response = await fetch(`${BASE_URL}/v3/entities/graph`);
+    if (!response.ok) throw new Error('Failed to fetch entity graph');
+    return await response.json();
+  } catch {
+    return { nodes: [], links: [] };
+  }
+};
+
+export const fetchEntityClusters = async (): Promise<{ clusters: EntityCluster[] }> => {
+  try {
+    const response = await fetch(`${BASE_URL}/v3/entities/clusters`);
+    if (!response.ok) throw new Error('Failed to fetch entity clusters');
+    return await response.json();
+  } catch {
+    return { clusters: [] };
+  }
+};
+
+export const fetchGamingDetection = async (): Promise<{ suspects: GamingSuspect[] }> => {
+  try {
+    const response = await fetch(`${BASE_URL}/v3/monitoring/gaming-detection`);
+    if (!response.ok) throw new Error('Failed to fetch gaming detection suspects');
+    return await response.json();
+  } catch {
+    return { suspects: [] };
+  }
+};
+

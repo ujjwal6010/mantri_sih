@@ -1,0 +1,8 @@
+# Mantri Drishti — MPLADS Risk Intelligence Platform
+# https://mantri-drishti.gov.in
+
+User-agent: *
+Disallow: /api/
+Allow: /
+
+Sitemap: https://mantri-drishti.gov.in/sitemap.xml

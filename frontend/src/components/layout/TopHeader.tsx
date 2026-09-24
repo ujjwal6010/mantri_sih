@@ -1,28 +1,14 @@
 import React from 'react';
-import { Search, MapPin, ChevronDown, Sun, Moon } from 'lucide-react';
+import { Search, ChevronDown, Sun, Moon } from 'lucide-react';
 
 interface TopHeaderProps {
   theme: 'light' | 'dark';
   toggleTheme: () => void;
-  selectedState: string;
-  onStateChange: (state: string) => void;
 }
-
-const STATES = [
-  'All States',
-  'Rajasthan',
-  'Maharashtra',
-  'Uttar Pradesh',
-  'Tamil Nadu',
-  'Karnataka',
-  'Madhya Pradesh',
-];
 
 export const TopHeader: React.FC<TopHeaderProps> = ({
   theme,
   toggleTheme,
-  selectedState,
-  onStateChange,
 }) => {
   return (
     <header className="top-header">

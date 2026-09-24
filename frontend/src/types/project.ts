@@ -46,6 +46,85 @@ export interface RiskBreakdown {
   peer_score: number;
 }
 
+// V3 Intelligence Types
+export interface RiskSnapshot {
+  snapshot_at: string;
+  risk_score: number;
+  rule_score: number;
+  ml_anomaly_score: number;
+  similarity_score: number;
+  peer_score: number;
+  confidence_score: number;
+  delta: number | null;
+  is_change_point: boolean;
+}
+
+export interface RiskVelocity {
+  velocity: number;
+  total_change: number;
+  trend: 'stable' | 'increasing' | 'rapid_increase' | 'decreasing' | 'rapid_decrease';
+  recent_changes: Array<{
+    from: number;
+    to: number;
+    delta: number | null;
+  }>;
+}
+
+export interface ResidualAnomaly {
+  project_code: string;
+  raw_risk_score: number;
+  explained_deduction: number;
+  contextual_reasons: string[];
+  residual_risk_score: number;
+  unexplained_percentage: number;
+  status: 'normal' | 'contextually_explained' | 'moderate_unexplained_risk' | 'high_unexplained_risk';
+}
+
+export interface EntityNode {
+  id: number;
+  type: 'project' | 'contractor' | 'agency';
+  label: string;
+  ref: string | null;
+  avg_risk: number;
+  max_risk: number;
+  flagged_count: number;
+  total_count: number;
+}
+
+export interface EntityEdge {
+  source: number;
+  target: number;
+  type: string;
+  weight: number;
+  details: string[];
+}
+
+export interface EntityGraph {
+  nodes: EntityNode[];
+  links: EntityEdge[];
+}
+
+export interface EntityCluster {
+  entity_name: string;
+  entity_type: string;
+  total_projects: number;
+  flagged_projects: number;
+  avg_risk: number;
+  max_risk: number;
+  emergent_risk_score: number;
+}
+
+export interface GamingSuspect {
+  project_id: string;
+  project_name: string;
+  agency: string;
+  contractor: string;
+  gaming_score: number;
+  reasons: string[];
+  evidence_count: number;
+}
+
+
 export interface RiskResponse {
   risk_score: number;
   confidence_score: number;

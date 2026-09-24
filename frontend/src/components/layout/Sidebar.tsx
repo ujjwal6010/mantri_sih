@@ -2,7 +2,6 @@ import React from 'react';
 import {
   Folder,
   Map,
-  BadgeIcon,
   FileText,
   Settings,
   Landmark,

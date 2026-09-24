@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React from 'react';
 import type { OverviewStats } from '../types/project';
 import {
   MapPin,
@@ -7,6 +7,8 @@ import {
   TrendingUp,
 } from 'lucide-react';
 import { RiskDistributionChart, StateRiskChart, WorkTypeChart } from './RiskCharts';
+import { EntityGraph } from './EntityGraph';
+import { GamingDetectionPanel } from './GamingDetectionPanel';
 
 interface AnalyticsViewProps {
   overview: OverviewStats | null;
@@ -90,6 +92,16 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
                 ))}
             </div>
           </div>
+        </div>
+        
+        {/* V3: Entity Graph Intelligence */}
+        <div className="chart-card full-width entity-graph-card">
+          <EntityGraph />
+        </div>
+
+        {/* V3: Gaming Detection */}
+        <div className="chart-card full-width">
+          <GamingDetectionPanel />
         </div>
       </div>
     </div>

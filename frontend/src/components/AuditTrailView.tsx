@@ -271,12 +271,12 @@ export const AuditTrailView = () => {
                   </div>
                   {details && (
                     <div className="audit-event-details">
-                      {details.risk_score !== undefined && <span>Risk: {String(details.risk_score)}</span>}
-                      {details.from_status && <span>{String(details.from_status)} → {String(details.to_status)}</span>}
-                      {details.evidence_type && <span>Type: {String(details.evidence_type)}</span>}
-                      {details.reason && <span>{String(details.reason)}</span>}
-                      {details.notes && <span>{String(details.notes)}</span>}
-                      {details.reassigned_to && <span>Re-assigned to: {String(details.reassigned_to)}</span>}
+                      {details.risk_score !== undefined && <span>Risk: {String(details.risk_score as any)}</span>}
+                      {!!details.from_status && <span>{String(details.from_status as any)} → {String(details.to_status as any)}</span>}
+                      {!!details.evidence_type && <span>Type: {String(details.evidence_type as any)}</span>}
+                      {!!details.reason && <span>{String(details.reason as any)}</span>}
+                      {!!details.notes && <span>{String(details.notes as any)}</span>}
+                      {!!details.reassigned_to && <span>Re-assigned to: {String(details.reassigned_to as any)}</span>}
                     </div>
                   )}
                   <div className="audit-hash">

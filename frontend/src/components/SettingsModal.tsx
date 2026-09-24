@@ -1,5 +1,5 @@
 import React from 'react';
-import { X, Settings, Database, HardDrive, ShieldAlert } from 'lucide-react';
+import { X, Settings, Database } from 'lucide-react';
 
 interface SettingsModalProps {
   onClose: () => void;
