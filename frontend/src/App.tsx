@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import './styles/theme.css';
 import './styles/dashboard.css';
+import './styles/v2-advanced.css';
 import type { ProjectSummary, OverviewStats, RiskBand } from './types/project';
 import {
   checkBackendHealth,

@@ -11,6 +11,10 @@ import type {
   AlertStats,
   SubmitEvidencePayload,
   UpdateAlertPayload,
+  EvidenceRequirement,
+  SufficiencyScore,
+  InspectorStats,
+  ReinspectionResult,
 } from '../types/project';
 import {
   MOCK_DOSSIERS,
@@ -353,5 +357,62 @@ export async function fetchAlertOverview(): Promise<AlertStats> {
     return await res.json();
   } catch {
     return MOCK_ALERT_STATS;
+  }
+}
+
+// V2 Advanced: Evidence Requirements, Sufficiency, Inspector Analytics
+
+export async function fetchEvidenceRequirements(
+  projectId: string,
+): Promise<EvidenceRequirement[]> {
+  try {
+    const res = await fetch(`${BASE_URL}/projects/${projectId}/evidence-requirements`);
+    if (!res.ok) throw new Error(`Evidence requirements fetch failed`);
+    return await res.json();
+  } catch {
+    return [];
+  }
+}
+
+export async function fetchSufficiencyScore(
+  projectId: string,
+): Promise<SufficiencyScore> {
+  try {
+    const res = await fetch(`${BASE_URL}/projects/${projectId}/evidence-sufficiency`);
+    if (!res.ok) throw new Error(`Sufficiency score fetch failed`);
+    return await res.json();
+  } catch {
+    return {
+      score: 0,
+      total_required: 0,
+      submitted_count: 0,
+      missing_types: [],
+      requirements: [],
+    };
+  }
+}
+
+export async function fetchInspectorAnalytics(): Promise<InspectorStats[]> {
+  try {
+    const res = await fetch(`${BASE_URL}/inspectors/analytics`);
+    if (!res.ok) throw new Error(`Inspector analytics fetch failed`);
+    return await res.json();
+  } catch {
+    return [];
+  }
+}
+
+export async function triggerReinspection(
+  sampleRate = 0.2,
+): Promise<ReinspectionResult> {
+  try {
+    const res = await fetch(
+      `${BASE_URL}/reinspection/trigger?sample_rate=${sampleRate}`,
+      { method: 'POST' },
+    );
+    if (!res.ok) throw new Error(`Reinspection trigger failed`);
+    return await res.json();
+  } catch {
+    return { reopened: 0, message: 'Re-inspection service unavailable.' };
   }
 }

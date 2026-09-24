@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import type { EvidenceRecord, SubmitEvidencePayload } from '../types/project';
-import { fetchEvidence, submitEvidence } from '../services/api';
+import type { EvidenceRecord, SubmitEvidencePayload, SufficiencyScore } from '../types/project';
+import { fetchEvidence, submitEvidence, fetchSufficiencyScore } from '../services/api';
 
 interface EvidencePanelProps {
   projectId: string;
@@ -25,6 +25,7 @@ const OFFICERS = ['Inspector Sharma', 'Inspector Verma', 'Inspector Patel', 'Ins
 
 export const EvidencePanel = ({ projectId, compact = false }: EvidencePanelProps) => {
   const [evidence, setEvidence] = useState<EvidenceRecord[]>([]);
+  const [sufficiency, setSufficiency] = useState<SufficiencyScore | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -40,8 +41,12 @@ export const EvidencePanel = ({ projectId, compact = false }: EvidencePanelProps
 
   const loadEvidence = async () => {
     setIsLoading(true);
-    const data = await fetchEvidence(projectId);
-    setEvidence(data);
+    const [evidenceData, sufficiencyData] = await Promise.all([
+      fetchEvidence(projectId),
+      fetchSufficiencyScore(projectId),
+    ]);
+    setEvidence(evidenceData);
+    setSufficiency(sufficiencyData);
     setIsLoading(false);
   };
 
@@ -70,6 +75,14 @@ export const EvidencePanel = ({ projectId, compact = false }: EvidencePanelProps
 
   const displayedEvidence = compact ? evidence.slice(0, 3) : evidence;
 
+  const sufficiencyColor = sufficiency
+    ? sufficiency.score >= 80
+      ? 'var(--risk-low)'
+      : sufficiency.score >= 40
+        ? 'var(--risk-medium)'
+        : 'var(--risk-critical)'
+    : 'var(--text-muted)';
+
   return (
     <div className="evidence-panel">
       <div className="evidence-panel-header">
@@ -84,6 +97,43 @@ export const EvidencePanel = ({ projectId, compact = false }: EvidencePanelProps
           </button>
         )}
       </div>
+
+      {/* Sufficiency Gauge */}
+      {sufficiency && sufficiency.total_required > 0 && (
+        <div className="sufficiency-section">
+          <div className="sufficiency-header">
+            <span className="sufficiency-label">EVIDENCE SUFFICIENCY</span>
+            <span className="sufficiency-score" style={{ color: sufficiencyColor }}>
+              {sufficiency.score.toFixed(0)}%
+            </span>
+          </div>
+          <div className="sufficiency-bar-track">
+            <div
+              className="sufficiency-bar-fill"
+              style={{
+                width: `${Math.min(sufficiency.score, 100)}%`,
+                background: sufficiencyColor,
+              }}
+            />
+          </div>
+          <div className="sufficiency-breakdown">
+            <span>{sufficiency.submitted_count} / {sufficiency.total_required} required types submitted</span>
+          </div>
+
+          {/* Requirements Checklist */}
+          <div className="requirements-checklist">
+            {sufficiency.requirements.map((req) => (
+              <div key={req.type} className={`requirement-item ${req.submitted ? 'submitted' : 'missing'}`}>
+                <span className="req-status-icon">{req.submitted ? '✅' : '❌'}</span>
+                <div className="req-info">
+                  <span className="req-type">{EVIDENCE_LABELS[req.type] || req.type}</span>
+                  <span className="req-reason">{req.reasons[0]}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {showForm && (
         <div className="evidence-form">

@@ -1,0 +1,299 @@
+/* ============================================================
+   V2 ADVANCED: Sufficiency Gauge, Inspector Analytics, Re-inspection
+   ============================================================ */
+
+/* Sufficiency Gauge */
+.sufficiency-section {
+  background: var(--bg-primary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: var(--space-3);
+  margin-bottom: var(--space-3);
+}
+
+.sufficiency-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-2);
+}
+
+.sufficiency-label {
+  font-size: var(--text-xs);
+  font-weight: 700;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.sufficiency-score {
+  font-size: var(--text-lg);
+  font-weight: 800;
+}
+
+.sufficiency-bar-track {
+  height: 8px;
+  background: var(--border-subtle);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: var(--space-2);
+}
+
+.sufficiency-bar-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.sufficiency-breakdown {
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  margin-bottom: var(--space-3);
+}
+
+/* Requirements Checklist */
+.requirements-checklist {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.requirement-item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  padding: var(--space-2);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  border: 1px solid var(--border-subtle);
+}
+
+.requirement-item.submitted {
+  border-color: var(--risk-low);
+  background: color-mix(in srgb, var(--risk-low) 5%, var(--surface));
+}
+
+.requirement-item.missing {
+  border-color: var(--risk-critical);
+  background: color-mix(in srgb, var(--risk-critical) 5%, var(--surface));
+}
+
+.req-status-icon {
+  font-size: 14px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.req-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.req-type {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.req-reason {
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+/* Inspector Behaviour Analytics */
+.inspector-analytics-section {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+  margin-bottom: var(--space-4);
+}
+
+.inspector-analytics-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: var(--space-4);
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+.inspector-analytics-title h3 {
+  font-size: var(--text-lg);
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 var(--space-1) 0;
+}
+
+.inspector-subtitle {
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+}
+
+.btn-reinspection {
+  padding: var(--space-2) var(--space-4);
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  color: #ffffff;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.btn-reinspection:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+}
+
+.btn-reinspection:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.reinspection-result {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  background: color-mix(in srgb, #6366f1 10%, var(--bg-primary));
+  border: 1px solid color-mix(in srgb, #6366f1 30%, var(--border));
+  border-radius: var(--radius-sm);
+  font-size: var(--text-sm);
+  color: var(--text-primary);
+  margin-bottom: var(--space-3);
+}
+
+.reinspection-icon {
+  font-size: 16px;
+}
+
+.inspector-loading,
+.inspector-empty {
+  text-align: center;
+  padding: var(--space-4);
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+}
+
+.inspector-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--space-3);
+}
+
+.inspector-card {
+  background: var(--bg-primary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: var(--space-3);
+  transition: all var(--transition-fast);
+}
+
+.inspector-card:hover {
+  border-color: var(--border-strong);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.inspector-card.flagged {
+  border-color: var(--risk-critical);
+  background: color-mix(in srgb, var(--risk-critical) 4%, var(--bg-primary));
+}
+
+.inspector-card-top {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
+}
+
+.inspector-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: var(--text-sm);
+  flex-shrink: 0;
+}
+
+.inspector-identity {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+
+.inspector-name {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.inspector-cases {
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+}
+
+.inspector-flag-badge {
+  background: var(--risk-critical);
+  color: #ffffff;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 10px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.inspector-metrics {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-2);
+}
+
+.inspector-metric {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.metric-label {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.metric-value {
+  font-size: var(--text-sm);
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.metric-value.metric-warning {
+  color: var(--risk-critical);
+}
+
+.inspector-flag-reason {
+  margin-top: var(--space-2);
+  padding: var(--space-2);
+  background: color-mix(in srgb, var(--risk-critical) 8%, var(--surface));
+  border-radius: var(--radius-sm);
+  font-size: var(--text-xs);
+  color: var(--risk-critical);
+  line-height: 1.4;
+  border-left: 3px solid var(--risk-critical);
+}

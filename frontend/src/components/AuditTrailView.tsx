@@ -1,6 +1,11 @@
 import { useState, useEffect } from 'react';
-import type { AuditEvent } from '../types/project';
-import { fetchAuditTrail, verifyAuditChain } from '../services/api';
+import type { AuditEvent, InspectorStats } from '../types/project';
+import {
+  fetchAuditTrail,
+  verifyAuditChain,
+  fetchInspectorAnalytics,
+  triggerReinspection,
+} from '../services/api';
 
 const ACTION_LABELS: Record<string, string> = {
   alert_opened: 'Alert Opened',
@@ -43,8 +48,15 @@ export const AuditTrailView = () => {
   const [verifyResult, setVerifyResult] = useState<{ valid: boolean; checked: number; broken_at: number | null } | null>(null);
   const [isVerifying, setIsVerifying] = useState(false);
 
+  // Inspector analytics state
+  const [inspectors, setInspectors] = useState<InspectorStats[]>([]);
+  const [isLoadingInspectors, setIsLoadingInspectors] = useState(true);
+  const [reinspectionMsg, setReinspectionMsg] = useState<string | null>(null);
+  const [isReinspecting, setIsReinspecting] = useState(false);
+
   useEffect(() => {
     loadTrail();
+    loadInspectors();
   }, []);
 
   const loadTrail = async () => {
@@ -55,6 +67,13 @@ export const AuditTrailView = () => {
     setIsLoading(false);
   };
 
+  const loadInspectors = async () => {
+    setIsLoadingInspectors(true);
+    const data = await fetchInspectorAnalytics();
+    setInspectors(data);
+    setIsLoadingInspectors(false);
+  };
+
   const handleVerify = async () => {
     if (!verifyProjectId.trim()) return;
     setIsVerifying(true);
@@ -62,6 +81,15 @@ export const AuditTrailView = () => {
     setVerifyResult(result);
     setIsVerifying(false);
     await loadTrail();
+  };
+
+  const handleReinspection = async () => {
+    setIsReinspecting(true);
+    setReinspectionMsg(null);
+    const result = await triggerReinspection(0.2);
+    setReinspectionMsg(result.message);
+    setIsReinspecting(false);
+    await Promise.all([loadTrail(), loadInspectors()]);
   };
 
   const filteredEvents = filterAction === 'all'
@@ -75,6 +103,92 @@ export const AuditTrailView = () => {
 
   return (
     <div className="audit-trail-view">
+      {/* Inspector Behaviour Analytics */}
+      <div className="inspector-analytics-section">
+        <div className="inspector-analytics-header">
+          <div className="inspector-analytics-title">
+            <h3>👁‍🗨 Inspector Behaviour Analytics</h3>
+            <span className="inspector-subtitle">
+              Monitors clearance patterns to flag potential rubber-stamping
+            </span>
+          </div>
+          <div className="inspector-analytics-actions">
+            <button
+              className="btn-reinspection"
+              onClick={handleReinspection}
+              disabled={isReinspecting}
+            >
+              {isReinspecting ? '⏳ Triggering...' : '🔄 Trigger Re-inspection'}
+            </button>
+          </div>
+        </div>
+
+        {reinspectionMsg && (
+          <div className="reinspection-result">
+            <span className="reinspection-icon">🔁</span>
+            <span>{reinspectionMsg}</span>
+          </div>
+        )}
+
+        {isLoadingInspectors ? (
+          <div className="inspector-loading">Loading inspector profiles...</div>
+        ) : inspectors.length === 0 ? (
+          <div className="inspector-empty">No inspector activity recorded yet.</div>
+        ) : (
+          <div className="inspector-cards-grid">
+            {inspectors.map((ins) => (
+              <div
+                key={ins.inspector}
+                className={`inspector-card ${ins.is_flagged ? 'flagged' : ''}`}
+              >
+                <div className="inspector-card-top">
+                  <div className="inspector-avatar">
+                    {ins.inspector.split(' ').pop()?.charAt(0) || '?'}
+                  </div>
+                  <div className="inspector-identity">
+                    <span className="inspector-name">{ins.inspector}</span>
+                    <span className="inspector-cases">{ins.total_handled} cases handled</span>
+                  </div>
+                  {ins.is_flagged && (
+                    <span className="inspector-flag-badge">⚠ FLAGGED</span>
+                  )}
+                </div>
+
+                <div className="inspector-metrics">
+                  <div className="inspector-metric">
+                    <span className="metric-label">Resolve Rate</span>
+                    <span className={`metric-value ${ins.resolve_rate > 0.9 ? 'metric-warning' : ''}`}>
+                      {(ins.resolve_rate * 100).toFixed(0)}%
+                    </span>
+                  </div>
+                  <div className="inspector-metric">
+                    <span className="metric-label">Escalated</span>
+                    <span className="metric-value">{ins.escalated}</span>
+                  </div>
+                  <div className="inspector-metric">
+                    <span className="metric-label">Active</span>
+                    <span className="metric-value">{ins.active_reviews}</span>
+                  </div>
+                  <div className="inspector-metric">
+                    <span className="metric-label">Avg Response</span>
+                    <span className="metric-value">
+                      {ins.avg_response_hours != null ? `${ins.avg_response_hours}h` : '—'}
+                    </span>
+                  </div>
+                </div>
+
+                {ins.is_flagged && ins.flag_reason && (
+                  <div className="inspector-flag-reason">
+                    {ins.flag_reason}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Audit Trail Header */}
       <div className="audit-trail-header">
         <div className="audit-trail-title">
           <h2>🔗 Audit Trail</h2>
@@ -162,6 +276,7 @@ export const AuditTrailView = () => {
                       {details.evidence_type && <span>Type: {String(details.evidence_type)}</span>}
                       {details.reason && <span>{String(details.reason)}</span>}
                       {details.notes && <span>{String(details.notes)}</span>}
+                      {details.reassigned_to && <span>Re-assigned to: {String(details.reassigned_to)}</span>}
                     </div>
                   )}
                   <div className="audit-hash">

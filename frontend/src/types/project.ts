@@ -226,3 +226,38 @@ export interface UpdateAlertPayload {
   actor: string;
   resolution_notes?: string | null;
 }
+
+export interface EvidenceRequirement {
+  type: string;
+  reasons: string[];
+  weight: number;
+  source_anomalies: string[];
+  submitted: boolean;
+}
+
+export interface SufficiencyScore {
+  score: number;
+  total_required: number;
+  submitted_count: number;
+  missing_types: string[];
+  requirements: EvidenceRequirement[];
+}
+
+export interface InspectorStats {
+  inspector: string;
+  total_handled: number;
+  resolved: number;
+  dismissed: number;
+  escalated: number;
+  active_reviews: number;
+  resolve_rate: number;
+  escalation_rate: number;
+  avg_response_hours: number | null;
+  is_flagged: boolean;
+  flag_reason: string | null;
+}
+
+export interface ReinspectionResult {
+  reopened: number;
+  message: string;
+}
