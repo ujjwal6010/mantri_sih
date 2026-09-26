@@ -20,6 +20,25 @@ interface DossierModalProps {
   onClose: () => void;
 }
 
+const formatMetricName = (metric: string): string => {
+  return metric
+    .split(/[_\s]+/)
+    .filter(Boolean)
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(' ');
+};
+
+const formatDeviation = (deviation: string): string => {
+  if (!deviation) return '';
+  const lower = deviation.toLowerCase().trim();
+  if (lower === 'within_range') return 'Within Range';
+  if (lower === 'above_iqr') return 'Above IQR';
+  if (lower === 'below_iqr') return 'Below IQR';
+  return deviation
+    .replace(/_/g, ' ')
+    .replace(/\b\w/g, (c) => c.toUpperCase());
+};
+
 export const DossierModal: React.FC<DossierModalProps> = ({
   projectId,
   projectSummary,
@@ -210,34 +229,36 @@ export const DossierModal: React.FC<DossierModalProps> = ({
                     Compared against peer projects in the same state and sector cohort to isolate systemic outliers.
                   </p>
                   <PeerComparisonChart peers={dossier.peer_comparisons} />
-                  <table className="peer-table">
-                    <thead>
-                      <tr>
-                        <th>METRIC EVALUATED</th>
-                        <th>SUBJECT VALUE</th>
-                        <th>PEER MEDIAN</th>
-                        <th>IQR NORMAL RANGE (Q1–Q3)</th>
-                        <th>STATISTICAL VARIANCE</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {dossier.peer_comparisons.map((comp, idx) => (
-                        <tr key={idx}>
-                          <td className="font-semibold">{comp.metric}</td>
-                          <td className="telemetry-num highlight">{comp.project_value}</td>
-                          <td className="telemetry-num">{comp.peer_median}</td>
-                          <td className="telemetry-num text-muted">
-                            {comp.peer_q1} – {comp.peer_q3}
-                          </td>
-                          <td>
-                            <span className={`variance-pill ${comp.deviation}`}>
-                              {comp.deviation.toUpperCase().replace('_', ' ')}
-                            </span>
-                          </td>
+                  <div className="peer-table-container">
+                    <table className="peer-table">
+                      <thead>
+                        <tr>
+                          <th>Metric Evaluated</th>
+                          <th className="th-num">Subject Value</th>
+                          <th className="th-num">Peer Median</th>
+                          <th className="th-center">IQR Normal Range (Q1–Q3)</th>
+                          <th className="th-center">Statistical Variance</th>
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                      </thead>
+                      <tbody>
+                        {dossier.peer_comparisons.map((comp, idx) => (
+                          <tr key={idx}>
+                            <td className="peer-metric-name">{formatMetricName(comp.metric)}</td>
+                            <td className="peer-value telemetry-num highlight td-num">{comp.project_value}</td>
+                            <td className="peer-value telemetry-num td-num">{comp.peer_median}</td>
+                            <td className="peer-range telemetry-num td-center">
+                              {comp.peer_q1} – {comp.peer_q3}
+                            </td>
+                            <td className="td-center">
+                              <span className={`variance-pill ${comp.deviation}`}>
+                                {formatDeviation(comp.deviation)}
+                              </span>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
               )}
 

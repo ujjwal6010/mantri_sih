@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import './styles/theme.css';
 import './styles/dashboard.css';
 import './styles/v2-advanced.css';
@@ -120,13 +120,15 @@ const App = () => {
       .filter((p) => {
         if (searchQuery.trim()) {
           const q = searchQuery.toLowerCase().trim();
-          const matchId = p.project_id.toLowerCase().includes(q);
-          const matchDesc = p.description.toLowerCase().includes(q);
-          const matchDist = p.district.toLowerCase().includes(q);
-          const matchState = p.state.toLowerCase().includes(q);
-          const matchConst = p.constituency.toLowerCase().includes(q);
-          const matchContractor = p.contractor.toLowerCase().includes(q);
-          if (!matchId && !matchDesc && !matchDist && !matchState && !matchConst && !matchContractor) {
+          const matchId = (p.project_id || '').toLowerCase().includes(q);
+          const matchWorkType = (p.work_type || '').toLowerCase().includes(q);
+          const matchDesc = (p.description || '').toLowerCase().includes(q);
+          const matchDist = (p.district || '').toLowerCase().includes(q);
+          const matchState = (p.state || '').toLowerCase().includes(q);
+          const matchConst = (p.constituency || '').toLowerCase().includes(q);
+          const matchContractor = (p.contractor || '').toLowerCase().includes(q);
+          const matchAgency = (p.agency || '').toLowerCase().includes(q);
+          if (!matchId && !matchWorkType && !matchDesc && !matchDist && !matchState && !matchConst && !matchContractor && !matchAgency) {
             return false;
           }
         }
@@ -174,6 +176,48 @@ const App = () => {
     setActiveTab('projects');
   };
 
+  const bottomSearchInputRef = useRef<HTMLInputElement>(null);
+
+  const handleActivateBottomSearch = useCallback(() => {
+    const doScrollAndFocus = () => {
+      const inputEl =
+        bottomSearchInputRef.current ||
+        document.querySelector<HTMLInputElement>('.filter-search-box input');
+      if (!inputEl) return;
+
+      const container = document.querySelector('.main-content');
+      const rect = inputEl.getBoundingClientRect();
+      const containerRect = container
+        ? container.getBoundingClientRect()
+        : { top: 0, bottom: window.innerHeight };
+
+      const isAlreadyVisible =
+        rect.top >= containerRect.top + 40 &&
+        rect.bottom <= containerRect.bottom - 40;
+
+      if (!isAlreadyVisible) {
+        inputEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+
+      inputEl.focus();
+
+      // Ensure focus remains reliably after smooth scroll
+      setTimeout(() => {
+        inputEl.focus();
+      }, 150);
+      setTimeout(() => {
+        inputEl.focus();
+      }, 350);
+    };
+
+    if (activeTab !== 'projects') {
+      setActiveTab('projects');
+      setTimeout(doScrollAndFocus, 60);
+    } else {
+      doScrollAndFocus();
+    }
+  }, [activeTab]);
+
   return (
     <div className="app-shell">
       <Sidebar
@@ -187,6 +231,14 @@ const App = () => {
         <TopHeader
           theme={theme}
           toggleTheme={toggleTheme}
+          searchQuery={searchQuery}
+          onSearchChange={(q) => {
+            setSearchQuery(q);
+            if (q.trim() && activeTab !== 'projects') {
+              setActiveTab('projects');
+            }
+          }}
+          onActivateBottomSearch={handleActivateBottomSearch}
         />
 
         <main className="main-content">
@@ -203,6 +255,7 @@ const App = () => {
           {activeTab === 'projects' ? (
             <div className="table-card">
               <FilterToolbar
+                searchInputRef={bottomSearchInputRef}
                 searchQuery={searchQuery}
                 onSearchChange={setSearchQuery}
                 selectedState={selectedState}

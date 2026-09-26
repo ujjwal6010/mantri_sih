@@ -33,27 +33,31 @@ The dataset that ships with the repository is synthetic: 80 projects across six 
 
 ### Key Capabilities
 
-- **Multi-engine risk fusion.** Four independent engines are combined into one calibrated Risk Score from 0 to 100.
-- **Explained flags.** Each flag lists the specific reasons behind it ("Why Flagged"), so no score is an unexplained alarm.
-- **Confidence scoring.** A 0 to 100 value based on data completeness and agreement between engines tells auditors how far to trust each flag.
-- **Investigation dossiers.** Structured audit reports with evidence, peer comparison, verification steps, and the statutory disclaimer.
-- **Interactive dashboard.** A React frontend with a ranked project table, Plotly charts, a Leaflet risk map, and a drill-down investigation drawer.
+- **Multi-engine Risk Fusion**: Four independent engines are combined into one calibrated Risk Score from 0 to 100.
+- **Explained Flags**: Each flag lists the specific reasons behind it ("Why Flagged"), so no score is an unexplained alarm.
+- **Contextual & Residual Risk**: Separates expected geographic/sector noise from genuine, unexplained anomalies.
+- **Temporal & Gaming Detection**: Tracks risk trajectories over time to flag sudden score jumps and detect manipulative behavior (gaming).
+- **Entity Graph Intelligence**: A D3 force-directed network that maps connections between projects, contractors, and agencies to identify systemic risk clusters.
+- **Investigation Dossiers & Evidence**: Structured audit reports with evidence requirements, peer comparisons, verification steps, and comprehensive audit trails.
+- **Advanced Interactive UI**: A premium React dashboard featuring collapsible navigation, micro-visual KPI telemetry, global `Ctrl+K` search connectivity, Plotly charts, and a Leaflet geospatial risk map.
+- **Production-Ready Polish**: Configured for performance and accessibility with Vite chunk splitting (isolated Plotly/D3 bundles), comprehensive SEO meta tags, 
+obots.txt, custom 404 handling, and canonical links.
 
 ---
 
 ## Screenshots
 
 ### Projects: triage and ranked explorer
-![Projects Dashboard](docs/screenshots/dashboard_projects.png)
+![Projects Dashboard](docs/screenshots/dashboard.png)
 
 ### Analytics: interactive Plotly charts
-![Analytics with Plotly Charts](docs/screenshots/dashboard_analytics.png)
+![Analytics with Plotly Charts](docs/screenshots/analytics.png)
 
 ### Investigation drawer: project intelligence
-![Investigation Drawer](docs/screenshots/dashboard_investigation.png)
+![Investigation Drawer](docs/screenshots/inspection.png)
 
 ### GIS risk map: geospatial analysis
-![GIS Risk Map](docs/screenshots/dashboard_gis_map.png)
+![GIS Risk Map](docs/screenshots/gis_map.png)
 
 ---
 
@@ -63,16 +67,22 @@ The dataset that ships with the repository is synthetic: 80 projects across six 
 mantri-drishti/
 |-- backend/                     # FastAPI + Python
 |   |-- app/
-|   |   |-- api/                 # REST endpoints (projects.py, risk.py)
+|   |   |-- api/                 # REST endpoints (projects.py, risk.py, v3.py)
 |   |   |-- core/                # Configuration & thresholds (config.py)
 |   |   |-- db/                  # SQLAlchemy ORM models + SQLite setup
 |   |   |-- schemas/             # Pydantic request/response schemas
 |   |   \-- services/            # Business logic & intelligence engines
-|   |       |-- anomaly_detection.py   # Rule Engine (6 rules) + Isolation Forest
-|   |       |-- similarity.py          # TF-IDF + Haversine multi-signal overlap
-|   |       |-- dossier.py             # IQR-based peer benchmarking
-|   |       |-- risk_engine.py         # Orchestrator + fusion + confidence
-|   |       \-- project_service.py     # CSV ingestion + fingerprint computation
+|   |       |-- anomaly_detection.py     # Rule Engine (6 rules) + Isolation Forest
+|   |       |-- similarity.py            # TF-IDF + Haversine multi-signal overlap
+|   |       |-- dossier.py               # IQR-based peer benchmarking
+|   |       |-- risk_engine.py           # Orchestrator + fusion + confidence
+|   |       |-- project_service.py       # CSV ingestion + fingerprint computation
+|   |       |-- temporal_risk.py         # Risk history and velocity tracking
+|   |       |-- contextual_baseline.py   # Baseline risk and residual anomaly
+|   |       |-- entity_graph.py          # Contractor/Agency network mapping
+|   |       |-- gaming_detector.py       # Detects manipulation and score gaming
+|   |       |-- audit_service.py         # Tracks alerts and verification trails
+|   |       \-- evidence_requirements.py # Generates dynamic proof checklists
 |   |-- data/
 |   |   \-- sample_projects.csv  # 80 synthetic projects (6 states, 10 work types)
 |   |-- generate_data.py         # Synthetic dataset generator with planted anomalies
@@ -82,46 +92,41 @@ mantri-drishti/
 |
 \-- frontend/                    # React + Vite + TypeScript
     \-- src/
-        |-- components/          # UI components (Header, ProjectTable, DossierModal, etc.)
+        |-- components/          # UI components (Header, ProjectTable, EntityGraph, etc.)
         |-- services/            # API client + mock data fallback
-        |-- styles/              # Vanilla CSS design system
+        |-- styles/              # Advanced Vanilla CSS design system (v2-advanced.css, v3-intelligence.css)
         \-- types/               # TypeScript type definitions
 ```
 
 ---
 
-## Scoring
+## Intelligence & Scoring
 
-### The four engines
+### 1. The Four Core Engines
 
 | Engine | Weight | Method | What it detects |
 |---|---|---|---|
-| **Rule Engine** | 35% | Six deterministic threshold rules | Spending well ahead of progress, a large gap between actual and expected progress, delay past the expected completion date, expenditure above the sanctioned amount, reported progress far ahead of funds released, and near-zero progress after a long elapsed time |
-| **Isolation Forest** | 30% | Unsupervised ML (scikit-learn, 100 trees, 10% contamination) | Statistical outliers across eight financial, progress, and timeline features |
-| **Similarity Engine** | 15% | TF-IDF text similarity, Haversine distance, amount closeness, overlapping execution windows, same work type, same agency, same contractor | Duplicate or overlapping works. A pair is reported only when at least three signals agree |
-| **Peer Benchmark** | 20% | IQR statistics against a peer cohort | Projects outside the 1.5 Ã— IQR fences of comparable peers |
+| **Rule Engine** | 35% | Six deterministic threshold rules | Spending ahead of progress, progress gaps, delays, expenditure over sanction, funds mismatch, stagnant progress |
+| **Isolation Forest** | 30% | Unsupervised ML (scikit-learn) | Statistical outliers across eight financial, progress, and timeline features |
+| **Similarity Engine** | 15% | TF-IDF text similarity, Haversine | Duplicate or overlapping works (requires at least three signals to agree) |
+| **Peer Benchmark** | 20% | IQR statistics against a peer cohort | Projects outside the 1.5 × IQR fences of comparable peers (by state and work type) |
 
-Peers are selected by work type first. The cohort is then narrowed to projects with a sanctioned amount between 0.5Ã— and 2Ã— of the target, and then to the same state, with each narrowing applied only if at least three peers remain.
+### 2. Advanced Risk Overlays (V2 & V3)
 
-### Risk Score and Confidence Score
+- **Contextual & Residual Risk**: The system calculates a baseline expected risk based on the sector and geography (e.g., historical delays in road works during monsoons). By subtracting this baseline from the raw fused score, it isolates the **Residual Anomaly**—the truly unexplained, suspicious risk.
+- **Temporal Trajectory**: Risk is no longer a static snapshot. The system records an immutable history of every project's score. If a risk score jumps by >15 points between assessments, a **Risk Velocity** alert is triggered.
+- **Gaming Detection**: Identifies projects exhibiting manipulative behavior, such as timing progress updates suspiciously perfectly before inspections or "ping-ponging" scores to reset alerts.
+- **Entity Risk Propagation**: Builds a graph network linking Projects to Agencies and Contractors. If a contractor is associated with multiple high-risk projects, their entity node turns red, and the systemic risk cascades to their other linked projects.
 
-**Risk Score** = 0.35 Ã— Rules + 0.30 Ã— IF + 0.15 Ã— Similarity + 0.20 Ã— Peer, on a 0 to 100 scale. Each engine is itself scored from 0 to 100.
+### 3. Risk Score and Confidence Score
+
+**Risk Score** = 0.35 × Rules + 0.30 × IF + 0.15 × Similarity + 0.20 × Peer, on a 0 to 100 scale. 
 
 **Confidence Score** is also 0 to 100:
-
 - Up to 50 points for data completeness (how many of the expected fields are present).
 - Up to 50 points for agreement between engines and financial consistency, reduced when the engine scores diverge widely.
 
-The dashboard groups Risk Scores into four bands:
-
-| Band | Score |
-|---|---|
-| Low | 0 to 39 |
-| Medium | 40 to 59 |
-| High | 60 to 79 |
-| Critical | 80 to 100 |
-
-The engine weights and rule thresholds are defined in `backend/app/core/config.py`. Override any of them with an environment variable prefixed `MD_` (for example, `MD_WEIGHT_RULES`).
+The dashboard groups Risk Scores into four bands: Low (0–39), Medium (40–59), High (60–79), and Critical (80–100).
 
 ---
 
@@ -133,9 +138,12 @@ The engine weights and rule thresholds are defined in `backend/app/core/config.p
 | `GET` | `/overview` | Dashboard statistics (risk distribution, top states, work types) |
 | `GET` | `/projects` | Ranked project list. Filters: `state`, `district`, `constituency`, `work_type`, `risk_min`, `risk_max`. Sort with `sort_by` (`risk`, `project_id`, `district`); page with `limit` and `offset` |
 | `GET` | `/projects/{id}` | Full project detail with fingerprint features |
-| `GET` | `/projects/{id}/fingerprint` | Five-dimension behavioral fingerprint |
 | `GET` | `/projects/{id}/risk` | Risk score breakdown by engine, plus "Why Flagged" |
 | `GET` | `/projects/{id}/dossier` | Full investigation dossier with evidence and verification steps |
+| `GET` | `/projects/{id}/risk-trajectory` | Historical risk scores and velocity over time |
+| `GET` | `/projects/{id}/residual-anomaly` | Contextual baseline vs unexplained residual risk |
+| `GET` | `/entities/graph` | Full force-directed entity network data |
+| `GET` | `/monitoring/gaming-detection` | Projects suspected of gaming the monitoring system |
 
 ---
 
@@ -233,7 +241,7 @@ Disclaimer: Risk signals for human verification. Not proof of fraud.
 |---|---|
 | **Backend** | Python 3.10+, FastAPI 0.115, SQLAlchemy 2.0, SQLite |
 | **ML / Analytics** | scikit-learn (Isolation Forest), Pandas, NumPy |
-| **Frontend** | React 19, TypeScript 6, Vite 8, Plotly.js |
+| **Frontend** | React 19, TypeScript 6, Vite 8, Plotly.js, D3.js |
 | **Maps** | Leaflet, React-Leaflet |
 | **Styling** | Vanilla CSS (dark glass-morphism design system) |
 | **Icons** | Lucide React |
@@ -249,3 +257,4 @@ Disclaimer: Risk signals for human verification. Not proof of fraud.
 ## License
 
 MIT
+

@@ -1,6 +1,6 @@
 import React from 'react';
 import type { ProjectSummary } from '../types/project';
-import { MapPin, MoreVertical, ArrowRight } from 'lucide-react';
+import { MapPin, MoreVertical, ArrowRight, Search } from 'lucide-react';
 
 interface ProjectTableProps {
   projects: ProjectSummary[];
@@ -28,8 +28,9 @@ export const ProjectTable: React.FC<ProjectTableProps> = ({
   if (projects.length === 0) {
     return (
       <div className="table-container empty-state">
+        <Search size={32} className="empty-icon" />
         <h3 className="empty-title">No Projects Found</h3>
-        <p className="empty-desc">Try adjusting your filters.</p>
+        <p className="empty-desc">No projects match your search or filter criteria. Try adjusting your query or resetting filters.</p>
       </div>
     );
   }

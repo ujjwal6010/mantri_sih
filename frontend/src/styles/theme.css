@@ -16,7 +16,8 @@
 
   --border: #E4E9F1;
   --border-strong: #D5DDEA;
-  --border-subtle: #EDF0F7;
+  --border-subtle: rgba(226, 232, 240, 0.7);
+  --divider: rgba(226, 232, 240, 0.7);
   --border-accent: rgba(234, 179, 8, 0.3); /* Yellow accent border */
 
   /* Primary Brand - Yellow Accent as requested */
@@ -26,26 +27,26 @@
   --primary-hover: #FACC15;
   --primary-text: #854D0E;
 
-  /* Risk Spectrum - Unchanged to maintain consistent signaling */
-  --risk-critical: #EF4444;
-  --risk-critical-bg: #FEECEC;
-  --risk-critical-border: #FECACA;
-  --risk-critical-text: #991B1B;
+  /* Risk Spectrum - Monochromatic Red Intensity Scale */
+  --risk-critical: #991B1B;
+  --risk-critical-bg: #FEE2E2;
+  --risk-critical-border: #F87171;
+  --risk-critical-text: #7F1D1D;
 
-  --risk-high: #F59E0B;
-  --risk-high-bg: #FFF5DD;
-  --risk-high-border: #FDE68A;
-  --risk-high-text: #92400E;
+  --risk-high: #DC2626;
+  --risk-high-bg: #FEF2F2;
+  --risk-high-border: #FCA5A5;
+  --risk-high-text: #991B1B;
 
-  --risk-medium: #3B82F6;
-  --risk-medium-bg: #EAF2FF;
-  --risk-medium-border: #BFDBFE;
-  --risk-medium-text: #1E40AF;
+  --risk-medium: #F87171;
+  --risk-medium-bg: #FFF5F5;
+  --risk-medium-border: #FECACA;
+  --risk-medium-text: #B91C1C;
 
-  --risk-low: #10B981;
-  --risk-low-bg: #E8F8F1;
-  --risk-low-border: #A7F3D0;
-  --risk-low-text: #065F46;
+  --risk-low: #FCA5A5;
+  --risk-low-bg: #FFFBFB;
+  --risk-low-border: #FEE2E2;
+  --risk-low-text: #845050;
 
   /* Accent Colors */
   --accent-amber: #F59E0B;
@@ -60,7 +61,7 @@
   --shadow-drawer: -4px 0 24px rgba(15, 23, 42, 0.1);
 
   /* Layout */
-  --sidebar-width: 232px;
+  --sidebar-width: 240px;
   --header-height: 56px;
   --drawer-width: 520px;
 
@@ -127,7 +128,8 @@ html[data-theme="dark"] {
   /* Borders */
   --border: #232336;
   --border-strong: #2E2E48;
-  --border-subtle: #191929;
+  --border-subtle: rgba(255, 255, 255, 0.06);
+  --divider: rgba(255, 255, 255, 0.06);
   --border-accent: rgba(234, 179, 8, 0.15);
 
   /* Primary Brand - Keep Yellow Accent but adjust for dark contrast */
@@ -137,22 +139,26 @@ html[data-theme="dark"] {
   --primary-hover: #CA8A04;
   --primary-text: #FEF08A;
 
-  /* Risk Spectrum - Dark Mode Adjustments */
-  --risk-critical-bg: rgba(239, 68, 68, 0.15);
-  --risk-critical-border: rgba(239, 68, 68, 0.3);
+  /* Risk Spectrum - Dark Mode Adjustments (Monochromatic Red Intensity) */
+  --risk-critical: #B91C1C;
+  --risk-critical-bg: rgba(185, 28, 28, 0.25);
+  --risk-critical-border: rgba(185, 28, 28, 0.45);
   --risk-critical-text: #FCA5A5;
 
-  --risk-high-bg: rgba(245, 158, 11, 0.15);
-  --risk-high-border: rgba(245, 158, 11, 0.3);
-  --risk-high-text: #FDE047;
+  --risk-high: #DC2626;
+  --risk-high-bg: rgba(220, 38, 38, 0.2);
+  --risk-high-border: rgba(220, 38, 38, 0.35);
+  --risk-high-text: #FECACA;
 
-  --risk-medium-bg: rgba(59, 130, 246, 0.15);
-  --risk-medium-border: rgba(59, 130, 246, 0.3);
-  --risk-medium-text: #93C5FD;
+  --risk-medium: #F87171;
+  --risk-medium-bg: rgba(248, 113, 113, 0.14);
+  --risk-medium-border: rgba(248, 113, 113, 0.25);
+  --risk-medium-text: #FEE2E2;
 
-  --risk-low-bg: rgba(16, 185, 129, 0.15);
-  --risk-low-border: rgba(16, 185, 129, 0.3);
-  --risk-low-text: #6EE7B7;
+  --risk-low: #FCA5A5;
+  --risk-low-bg: rgba(252, 165, 165, 0.08);
+  --risk-low-border: rgba(252, 165, 165, 0.18);
+  --risk-low-text: #E5BABA;
 
   /* Shadows - deeper for dark mode */
   --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.3);

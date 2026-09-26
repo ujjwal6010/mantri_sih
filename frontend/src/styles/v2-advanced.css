@@ -297,3 +297,125 @@
   line-height: 1.4;
   border-left: 3px solid var(--risk-critical);
 }
+
+/* ============================================================
+   Peer Statistical Benchmarking Table (Dossier)
+   ============================================================ */
+.peer-table-container {
+  width: 100%;
+  overflow-x: auto;
+  margin-top: var(--space-4);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.peer-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: var(--text-sm);
+}
+
+.peer-table thead {
+  background: var(--surface-secondary);
+}
+
+.peer-table th {
+  padding: 12px 16px;
+  font-size: var(--text-xs);
+  font-weight: 700;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+  text-align: left;
+}
+
+.peer-table th.th-num,
+.peer-table td.td-num {
+  text-align: right;
+}
+
+.peer-table th.th-center,
+.peer-table td.td-center {
+  text-align: center;
+}
+
+.peer-table td {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border-subtle);
+  color: var(--text-primary);
+  vertical-align: middle;
+}
+
+.peer-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.peer-table tbody tr {
+  transition: background-color var(--transition-fast);
+}
+
+.peer-table tbody tr:hover {
+  background-color: var(--surface-hover);
+}
+
+.peer-metric-name {
+  font-weight: 600;
+  color: var(--text-primary);
+  display: block;
+}
+
+.peer-value {
+  font-family: var(--font-mono);
+  font-weight: 600;
+}
+
+.peer-value.highlight {
+  color: var(--primary);
+  font-weight: 700;
+}
+
+.peer-range {
+  font-family: var(--font-mono);
+  color: var(--text-secondary);
+}
+
+/* Variance Status Badges / Pills */
+.variance-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 12px;
+  border-radius: 9999px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  line-height: 1.2;
+}
+
+.variance-pill.within_range,
+.variance-pill.within-range {
+  background: var(--risk-low-bg);
+  color: var(--risk-low-text);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.variance-pill.above_iqr,
+.variance-pill.above-iqr {
+  background: var(--risk-critical-bg);
+  color: var(--risk-critical-text);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.variance-pill.below_iqr,
+.variance-pill.below-iqr {
+  background: var(--risk-high-bg);
+  color: var(--risk-high-text);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+

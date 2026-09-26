@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React from 'react';
 import { Search, ChevronDown, Filter } from 'lucide-react';
 import type { RiskBand } from '../types/project';
 
@@ -15,6 +15,7 @@ interface FilterToolbarProps {
   totalFiltered: number;
   totalProjects: number;
   selectedRiskBand: RiskBand;
+  searchInputRef?: React.RefObject<HTMLInputElement | null>;
 }
 
 export const FilterToolbar: React.FC<FilterToolbarProps> = ({
@@ -27,12 +28,14 @@ export const FilterToolbar: React.FC<FilterToolbarProps> = ({
   sortBy,
   onSortByChange,
   selectedRiskBand,
+  searchInputRef,
 }) => {
   return (
     <div className="table-filter-toolbar">
       <div className="filter-search-box">
         <Search size={16} className="filter-search-icon" />
         <input
+          ref={searchInputRef}
           type="text"
           placeholder="Search by ID, contractor, work description, constituency..."
           value={searchQuery}
